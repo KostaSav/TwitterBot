@@ -1,0 +1,115 @@
+# A twitter bot with python using the selenium library and GeckoDriver
+# Based on Dev Ed's video tutorial (https://www.youtube.com/watch?v=7ovFudqFB0Q)
+
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+import time
+
+# Your login data and the keyword you want to search for in Twitter
+username = "your_phone_email_or_username"
+password = "your_password"
+searchTerm = "giveaway"
+
+
+class TwitterBot:
+
+    def __init__(self, username, password):
+        self.username = username
+        self.password = password
+        self.bot = webdriver.Firefox()
+        self.bot.maximize_window()
+
+    def login(self):
+        bot = self.bot
+        bot.get('https://twitter.com/')
+        time.sleep(3)
+        username = bot.find_element_by_name("session[username_or_email]")
+        password = bot.find_element_by_name("session[password]")
+        # If anything is written inside the login forms, erase it
+        username.clear()
+        password.clear()
+        username.send_keys(self.username)
+        password.send_keys(self.password)
+        password.send_keys(Keys.RETURN)  # click the ENTER key to login
+        time.sleep(5)
+
+    # Scroll until the element we want to interact with (Like button, Retweet button, etc.) is inside the viewport
+    def scroll_shim(self, passed_in_driver, object):
+        x = object.location['x']
+        y = object.location['y']
+        scroll_by_coord = 'window.scrollTo(%s,%s);' % (
+            x,
+            y
+        )
+        scroll_nav_out_of_way = 'window.scrollBy(0, -120);'
+        passed_in_driver.execute_script(scroll_by_coord)
+        passed_in_driver.execute_script(scroll_nav_out_of_way)
+
+    def like_tweet(self, term):
+        links = list()
+        counter = 1  # count the retrieved tweets
+        bot = self.bot
+        bot.get('https://twitter.com/search?q=' + term + '&src=typd')
+        time.sleep(5)
+
+        # Loop how many times we scroll down and new tweets are loaded
+        for i in range(1, 3):
+            # The tweet's url can be found in several positions in the DOM
+            # tree, we fetch it once from the anchor tag containing the
+            # word "status" (ex. https://twitter.com/tweet_author_name/status/some_digits)
+            tweets = bot.find_elements_by_css_selector(
+                'a[href*="status"]:not([href*=photo]):not([href*=retweets]):not([href*=likes]):not([href*=media_tags])')
+            time.sleep(2)
+
+            # Get the tweet's actual url and store them in a list
+            tempLoopLinks = [elem.get_attribute("href") for elem in tweets]
+            for x in tempLoopLinks:
+                links.append(x)
+            time.sleep(2)
+            print("Loop " + str(i) + " complete!")
+
+            # Scroll down in order to load new tweets
+            bot.execute_script('window.scrollTo(0,document.body.scrollHeight)')
+            time.sleep(10)
+
+        # Locate and click the Like button
+        links = list(dict.fromkeys(links))  # Remove duplicates
+        for link in links:
+            print(counter, link)
+            bot.get(link)
+            time.sleep(10)
+            try:
+                # Find the Like button
+                toLike = bot.find_element_by_css_selector(
+                    'div[aria-label="Like"][role="button"][data-testid="like"]')
+                # print(toLike)
+                time.sleep(5)
+
+                # Scroll so that it is in our viewport
+                if 'firefox' in bot.capabilities['browserName']:
+                    self.scroll_shim(bot, toLike)
+                actions = ActionChains(bot)
+                actions.move_to_element(toLike)
+                actions.click()
+                actions.perform()
+
+                # Show a confirmation in console
+                time.sleep(2)
+                print("Gave a LIKE to tweet " + str(counter))
+                time.sleep(5)
+            except Exception as ex:
+                # At the moment, an exception will be thrown
+                # when a tweet is already liked
+                print("Exception...sleeping for a bit...")
+                print(ex)
+                time.sleep(10)
+
+            counter = counter + 1
+            time.sleep(1)
+
+
+# Our bot's name is bix
+bix = TwitterBot(username, password)
+bix.login()
+bix.like_tweet(searchTerm)

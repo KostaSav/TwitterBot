@@ -10,7 +10,7 @@ _the tutorial code is not entirely functional any more, because of Twitter's cha
 
 - if a tweet is already liked, an exception is thrown and a message is printed, but it does not break
 - again, if a tweet is already liked, the bot might like a comment instead
-- even if the sign in is unsuccessful, the program still searches the given word and tries to like tweets
+- ~~even if the sign in is unsuccessful, the program still searches the given word and tries to like tweets
 
 ## TODO:
 

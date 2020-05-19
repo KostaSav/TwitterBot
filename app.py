@@ -33,8 +33,21 @@ class TwitterBot:
         password.send_keys(self.password)
         password.send_keys(Keys.RETURN)  # click the ENTER key to login
         time.sleep(5)
+        loginError = bot.find_elements_by_xpath(
+            "//span[contains(text(), 'match our records')]")  # not the best solution, sometimes works with few words
+        time.sleep(5)
+        if not loginError:
+            print("Login Successful!")
+            return True
+        else:
+            print("Your credentials were incorrect...\nBot is dead!")
+            bot.close()
+            return False
+        print(loginError)
+        time.sleep(5)
 
     # Scroll until the element we want to interact with (Like button, Retweet button, etc.) is inside the viewport
+
     def scroll_shim(self, passed_in_driver, object):
         x = object.location['x']
         y = object.location['y']
@@ -111,5 +124,6 @@ class TwitterBot:
 
 # Our bot's name is bix
 bix = TwitterBot(username, password)
-bix.login()
-bix.like_tweet(searchTerm)
+loginSuccess = bix.login()
+if loginSuccess:
+    bix.like_tweet(searchTerm)

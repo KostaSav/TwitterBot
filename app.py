@@ -1,5 +1,6 @@
 # A twitter bot with python using the selenium library and GeckoDriver
 # Based on Dev Ed's video tutorial (https://www.youtube.com/watch?v=7ovFudqFB0Q)
+# Just a comment to test Git Bash commit
 
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys

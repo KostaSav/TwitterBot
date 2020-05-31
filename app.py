@@ -1,11 +1,11 @@
 # A twitter bot with python using the selenium library and GeckoDriver
 # Based on Dev Ed's video tutorial (https://www.youtube.com/watch?v=7ovFudqFB0Q)
 # Just a comment to test Git Bash commit
+import time
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.action_chains import ActionChains
-import time
+from selenium.webdriver.common.keys import Keys
 
 # Your login data and the keyword you want to search for in Twitter
 # username = "your_phone_email_or_username"
@@ -15,7 +15,6 @@ comment = "Nice"
 
 
 class TwitterBot:
-
     def __init__(self, username, password):
         self.username = username
         self.password = password
@@ -24,7 +23,7 @@ class TwitterBot:
 
     def login(self):
         bot = self.bot
-        bot.get('https://twitter.com/')
+        bot.get("https://twitter.com/")
         time.sleep(3)
         username = bot.find_element_by_name("session[username_or_email]")
         password = bot.find_element_by_name("session[password]")
@@ -36,7 +35,8 @@ class TwitterBot:
         password.send_keys(Keys.RETURN)  # click the ENTER key to login
         time.sleep(5)
         loginError = bot.find_elements_by_xpath(
-            "//span[contains(text(), 'match our records')]")  # not the best solution, sometimes works with few words
+            "//span[contains(text(), 'match our records')]"
+        )  # not the best solution, sometimes works with few words
         time.sleep(5)
         if not loginError:
             print("Login Successful!")
@@ -51,13 +51,10 @@ class TwitterBot:
     # Scroll until the element we want to interact with (Like button, Retweet button, etc.) is inside the viewport
 
     def scroll_shim(self, passed_in_driver, object):
-        x = object.location['x']
-        y = object.location['y']
-        scroll_by_coord = 'window.scrollTo(%s,%s);' % (
-            x,
-            y
-        )
-        scroll_nav_out_of_way = 'window.scrollBy(0, -120);'
+        x = object.location["x"]
+        y = object.location["y"]
+        scroll_by_coord = "window.scrollTo(%s,%s);" % (x, y)
+        scroll_nav_out_of_way = "window.scrollBy(0, -120);"
         passed_in_driver.execute_script(scroll_by_coord)
         passed_in_driver.execute_script(scroll_nav_out_of_way)
 
@@ -65,7 +62,7 @@ class TwitterBot:
         links = list()
         counter = 1  # count the retrieved tweets
         bot = self.bot
-        bot.get('https://twitter.com/search?q=' + term + '&src=typd')
+        bot.get("https://twitter.com/search?q=" + term + "&src=typd")
         time.sleep(5)
 
         # Loop how many times we scroll down and new tweets are loaded
@@ -74,7 +71,8 @@ class TwitterBot:
             # tree, we fetch it once from the anchor tag containing the
             # word "status" (ex. https://twitter.com/tweet_author_name/status/some_digits)
             tweets = bot.find_elements_by_css_selector(
-                'a[href*="status"]:not([href*=photo]):not([href*=retweets]):not([href*=likes]):not([href*=media_tags])')
+                'a[href*="status"]:not([href*=photo]):not([href*=retweets]):not([href*=likes]):not([href*=media_tags])'
+            )
             time.sleep(2)
 
             # Get the tweet's actual url and store them in a list
@@ -85,7 +83,7 @@ class TwitterBot:
             print("Loop " + str(i) + " complete!")
 
             # Scroll down in order to load new tweets
-            bot.execute_script('window.scrollTo(0,document.body.scrollHeight)')
+            bot.execute_script("window.scrollTo(0,document.body.scrollHeight)")
             time.sleep(10)
 
         # Locate and click the Like button
@@ -97,12 +95,13 @@ class TwitterBot:
             try:
                 # Find the Like button
                 toLike = bot.find_element_by_css_selector(
-                    'div[aria-label="Like"][role="button"][data-testid="like"]')
+                    'div[aria-label="Like"][role="button"][data-testid="like"]'
+                )
                 # print(toLike)
                 time.sleep(5)
 
                 # Scroll so that it is in our viewport
-                if 'firefox' in bot.capabilities['browserName']:
+                if "firefox" in bot.capabilities["browserName"]:
                     self.scroll_shim(bot, toLike)
                 actions = ActionChains(bot)
                 actions.move_to_element(toLike)

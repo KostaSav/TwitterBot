@@ -8,9 +8,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 import time
 
 # Your login data and the keyword you want to search for in Twitter
-username = "your_phone_email_or_username"
-password = "your_password"
+# username = "your_phone_email_or_username"
+# password = "your_password"
 searchTerm = "giveaway"
+comment = "Nice"
 
 
 class TwitterBot:

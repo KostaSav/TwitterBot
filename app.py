@@ -2,10 +2,11 @@
 # Based on Dev Ed's video tutorial (https://www.youtube.com/watch?v=7ovFudqFB0Q)
 # Just a comment to test Git Bash commit
 
-from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.action_chains import ActionChains
 import time
+
+from selenium import webdriver
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium.webdriver.common.keys import Keys
 
 # Your login data and the keyword you want to search for in Twitter
 # username = "your_phone_email_or_username"

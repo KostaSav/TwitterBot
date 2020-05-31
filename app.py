@@ -9,6 +9,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 
 # Your login data and the keyword you want to search for in Twitter
+test_conflict = 0
 # username = "your_phone_email_or_username"
 # password = "your_password"
 searchTerm = "giveaway"
